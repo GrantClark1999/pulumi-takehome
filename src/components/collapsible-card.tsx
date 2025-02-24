@@ -1,11 +1,12 @@
-import { twMerge } from 'tailwind-merge';
+import * as React from "react";
+import { twMerge } from "tailwind-merge";
 
 import {
   CollapsibleContext,
   useCollapsibleContext,
-} from '../context/collapsible-context';
-import { useId, useState, useCallback, useRef, useEffect } from 'react';
-import { ChevronDownIcon } from './icons/chevron-down-icon';
+} from "../context/collapsible-context";
+import { useId, useState, useCallback, useRef, useEffect } from "react";
+import { ChevronDownIcon } from "./icons/chevron-down-icon";
 
 interface CollapsibleCardProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultOpen?: boolean;
@@ -37,9 +38,9 @@ function CollapsibleCard({
   return (
     <CollapsibleContext.Provider value={{ isOpen, setIsOpen, id }}>
       <div
-        data-state={isOpen ? 'open' : 'closed'}
+        data-state={isOpen ? "open" : "closed"}
         className={twMerge(
-          'bg-card text-card-foreground rounded-lg border data-[state=open]:pb-6',
+          "bg-card text-card-foreground rounded-lg border data-[state=open]:pb-6",
           className
         )}
         {...props}
@@ -58,7 +59,7 @@ function CollapsibleCardTrigger({
   return (
     <button
       className={twMerge(
-        'cursor-pointer flex w-full items-center gap-2 aria-expanded:[&>svg]:rotate-180 p-6',
+        "cursor-pointer flex w-full items-center gap-2 aria-expanded:[&>svg]:rotate-180 p-6",
         className
       )}
       onClick={(e) => {
@@ -90,7 +91,7 @@ function CollapsibleCardContent({
 
     const resizeObserver = new ResizeObserver((entries) => {
       const contentHeight = entries[0]?.contentRect.height;
-      if (typeof contentHeight === 'number') {
+      if (typeof contentHeight === "number") {
         setHeight(contentHeight);
       }
     });
@@ -102,11 +103,11 @@ function CollapsibleCardContent({
   return (
     <div
       id={id}
-      data-state={isOpen ? 'open' : 'closed'}
+      data-state={isOpen ? "open" : "closed"}
       aria-hidden={!isOpen}
       style={{ height: isOpen ? height : 0 }}
       className={twMerge(
-        'overflow-y-clip transition-[height] duration-200 px-6',
+        "overflow-y-clip transition-[height] duration-200 px-6",
         className
       )}
       {...props}
@@ -116,12 +117,35 @@ function CollapsibleCardContent({
   );
 }
 
+function CollapsibleCardFooter({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  const numChildren = React.Children.count(props.children);
+  if (numChildren > 2) {
+    throw new Error(
+      "[DEV ERROR] -- Maximum of 2 children are allowed for CollapsibleCardFooter"
+    );
+  }
+  return (
+    <div
+      className={twMerge(
+        "flex justify-end items-center pt-6 gap-2 border-t",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 export {
   CollapsibleCard,
   CollapsibleCardTrigger,
   CollapsibleCardContent,
+  CollapsibleCardFooter,
   //
   CollapsibleCard as Root,
   CollapsibleCardTrigger as Trigger,
   CollapsibleCardContent as Content,
+  CollapsibleCardFooter as Footer,
 };
